@@ -1,0 +1,16 @@
+.DS_Store
+.vscode
+.env
+.git
+.gitignore
+.dockerignore
+.coverage
+docker-compose.yml
+LICENSE
+README.md
+shared/
+dockerfiles/
+venv/
+compose/
+missions/
+nginx.conf

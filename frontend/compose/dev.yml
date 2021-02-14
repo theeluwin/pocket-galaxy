@@ -1,0 +1,15 @@
+version: "3"
+services:
+  app_dev:
+    build:
+      context: .
+      dockerfile: dockerfiles/dev.Dockerfile
+    image: pocket-galaxy-front-dev
+    environment:
+      WEB_PORT: ${WEB_PORT}
+      VUE_APP_API_PREFIX: ${API_PREFIX}
+      VUE_APP_MEDIA_PREFIX: ${MEDIA_PREFIX}
+    ports:
+      - "${WEB_PORT}:${WEB_PORT}"
+    volumes:
+      - ./src:/app/src

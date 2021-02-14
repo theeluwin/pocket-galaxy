@@ -1,0 +1,9 @@
+flake8
+coverage
+requests
+django
+django-cors-headers
+django-filter
+djangorestframework
+djangorestframework-jwt
+gunicorn
