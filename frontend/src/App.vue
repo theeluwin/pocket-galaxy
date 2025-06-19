@@ -1,8 +1,8 @@
 <template>
-  <v-app id="inspire">
+  <v-app>
     <Nav v-if="!$route.meta.hideNav" />
     <v-main>
-      <v-container id="container">
+      <v-container>
         <router-view />
       </v-container>
     </v-main>
@@ -10,23 +10,11 @@
   </v-app>
 </template>
 
-<style scoped>
-  #container {
-    max-width: 1200px;
-  }
-</style>
+<script setup lang="ts">
+  import { useRoute } from 'vue-router'
 
-<script>
-  import CommonNav from '@/components/common/Nav'
-  import CommonFooter from '@/components/common/Footer'
-  export default {
-    name: 'App',
-    components: {
-      'Nav': CommonNav,
-      'Footer': CommonFooter
-    },
-    props: {
-      source: String
-    }
-  }
+  import Nav from '@/components/Nav.vue'
+  import Footer from '@/components/Footer.vue'
+
+  const route = useRoute()
 </script>

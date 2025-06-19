@@ -1,12 +1,12 @@
-runpy () {
+x () {
     docker run \
         -it \
         --rm \
         --init \
         --workdir /app \
         -v "${PWD}:/app" \
-        node:lts-alpine \
+        node:24-alpine3.21 \
         "$@"
 }
 
-npm audit fix --force
+x npm audit fix

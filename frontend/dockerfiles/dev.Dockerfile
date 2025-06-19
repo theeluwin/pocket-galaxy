@@ -1,5 +1,5 @@
 # from
-FROM node:lts-alpine
+FROM node:24-alpine3.21
 LABEL maintainer="Jamie Seol <theeluwin@gmail.com>"
 
 # prepare
@@ -13,4 +13,4 @@ RUN npm install
 COPY . .
 
 # run
-CMD ["npm", "run", "serve"]
+CMD ["npm", "run", "dev"]

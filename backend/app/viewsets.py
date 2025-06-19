@@ -1,11 +1,7 @@
 from rest_framework import viewsets
 
-from app.serializers import (
-    DocumentSerializer,
-)
-from app.models import (
-    Document,
-)
+from app.serializers import DocumentSerializer
+from app.models import Document
 
 
 class DocumentViewSet(viewsets.ModelViewSet):

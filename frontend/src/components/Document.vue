@@ -1,28 +1,21 @@
 <template>
-  <v-card class="mb-5 px-3 pb-3">
-
-    <!-- header -->
-    <v-row>
-      <v-col sm="12">
-        <h4>{{ document.title }}</h4>
-      </v-col>
-    </v-row>
-
-    <!-- body -->
-    <v-row>
-      <v-col cols="12">
-        <p>{{ document.content }}</p>
-      </v-col>
-    </v-row>
-
-  </v-card>
+  <v-card
+    :title="document.title"
+    :subtitle="formatDate(document.published_at)"
+    :text="document.content"
+    class="mb-5"
+  />
 </template>
 
-<script>
-  export default {
-    name: 'Document',
-    props: {
-      document: Object
-    },
+<script setup lang="ts">
+  const props = defineProps({
+    document: {
+      type: Object,
+      required: true
+    }
+  })
+
+  function formatDate(date: Date) {
+    return date.toLocaleString()
   }
 </script>

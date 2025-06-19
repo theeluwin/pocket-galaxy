@@ -1,15 +1,16 @@
 import os
 import sys
+
 import django
 
-BASE_DIR: str = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(BASE_DIR)
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+sys.path.append(str(BASE_DIR))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
 
-from app.models import (
-    Document,
-)
+from app.models import Document
 
 
 def main():

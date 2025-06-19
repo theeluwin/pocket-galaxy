@@ -1,8 +1,6 @@
 from django.contrib import admin
 
-from app.models import (
-    Document,
-)
+from app.models import Document
 
 
 @admin.register(Document)

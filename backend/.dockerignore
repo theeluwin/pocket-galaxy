@@ -12,5 +12,4 @@ shared/
 dockerfiles/
 venv/
 compose/
-missions/
 nginx.conf

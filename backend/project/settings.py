@@ -1,28 +1,27 @@
-import os
-
 from os import getenv
-from os.path import abspath
-from os.path import join as pjoin
-from os.path import dirname as dname
+from pathlib import Path
 from datetime import timedelta
 
 
-# basic
-PROJECT_SLUG = 'project'
-BASE_DIR = dname(dname(abspath(__file__)))
-SHARED_DIR = '/shared'
+# custom
+ADMIN_TITLE = 'Pocket Galaxy Admin'
+
+# path
+BASE_DIR = Path(__file__).resolve().parent.parent
+SHARED_ROOT = Path('/shared')
 
 # credential
 SECRET_KEY = getenv('SECRET_KEY', "It's a secret to everybody!")
 try:
-    DEBUG = bool(int(os.getenv('DEBUG', False)))
+    DEBUG = bool(int(getenv('DEBUG', False)))
 except ValueError:
     DEBUG = False
-if DEBUG:
-    ALLOWED_HOSTS = ['*']
-else:
-    ALLOWED_HOSTS = [host for host in getenv('ALLOWED_HOSTS', '').split(',') if host]
-CORS_ORIGIN_ALLOW_ALL = True  # hurry up! we don't have time..
+
+# security
+SECURE_PROXY_SSL_HEADER = None
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SECURE_SSL_REDIRECT = False
 
 # app
 INSTALLED_APPS = [
@@ -32,13 +31,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
     'django_filters',
     'rest_framework',
+    'corsheaders',
     'app',
 ]
-ROOT_URLCONF = f'{PROJECT_SLUG}.urls'
-WSGI_APPLICATION = f'{PROJECT_SLUG}.wsgi.application'
+
+# wsgi
+WSGI_APPLICATION = 'project.wsgi.application'
+
+# url
+APPEND_SLASH = True
+ROOT_URLCONF = 'project.urls'
 
 # middleware
 MIDDLEWARE = [
@@ -51,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# password
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -65,6 +71,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+# AUTH_PASSWORD_VALIDATORS = []
 
 # i18n
 LANGUAGE_CODE = 'ko'
@@ -73,11 +80,53 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# static & media
+# resource
 STATIC_URL = '/static/'
-STATIC_ROOT = pjoin(SHARED_DIR, 'staticfiles')
+STATIC_ROOT = SHARED_ROOT / 'staticfiles'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = pjoin(SHARED_DIR, 'mediafiles')
+MEDIA_ROOT = SHARED_ROOT / 'mediafiles'
+
+# log
+LOG_ROOT = SHARED_ROOT / 'logfiles'
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '<%(asctime)s> %(levelname)s %(name)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'default': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_ROOT / 'django.log',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'formatter': 'standard',
+        },
+        'request': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_ROOT / 'request.log',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'formatter': 'standard',
+        },
+        'project': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': LOG_ROOT / 'project.log',
+        },
+    },
+    'loggers': {
+        'project': {
+            'handlers': ['project'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 # template
 TEMPLATES = [
@@ -100,9 +149,10 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': pjoin(SHARED_DIR, 'dbfiles', 'db.sqlite3'),
+        'NAME': SHARED_ROOT / 'dbfiles' / 'db.sqlite3',
     }
 }
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # rest
 REST_FRAMEWORK = {
@@ -110,7 +160,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
@@ -122,14 +172,60 @@ REST_FRAMEWORK = {
 }
 
 # jwt
-JWT_AUTH = {
-    'JWT_AUTH_HEADER_PREFIX': 'JWT',
-    'JWT_AUTH_COOKIE': 'user_session',
-    'JWT_ALLOW_REFRESH': True,
-    'JWT_EXPIRATION_DELTA': timedelta(minutes=10),
-    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=90),
-    'JWT_LEEWAY': 3600 * 24 * 7,
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_COOKIE': 'user_session',
+    'AUTH_COOKIE_DOMAIN': None,
+    'AUTH_COOKIE_SECURE': not DEBUG,
+    'AUTH_COOKIE_HTTP_ONLY': True,
+    'AUTH_COOKIE_PATH': '/',
+    'AUTH_COOKIE_SAMESITE': 'Lax',
+    'LEEWAY': 3600 * 24 * 7,
 }
 
-# custom
-ADMIN_TITLE = 'Pocket Galaxy Admin'
+# host
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = [host for host in getenv('ALLOWED_HOSTS', '').split(',') if host]
+CORS_ALLOW_ALL_ORIGINS = DEBUG
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:80',
+    'http://127.0.0.1:80',
+    'http://localhost:8001',
+    'http://127.0.0.1:8001',
+    'http://localhost:8002',
+    'http://127.0.0.1:8002',
+]  # TODO: need better way
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:80',
+    'http://127.0.0.1:80',
+    'http://localhost:8001',
+    'http://127.0.0.1:8001',
+    'http://localhost:8002',
+    'http://127.0.0.1:8002',
+]  # TODO: need better way
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'

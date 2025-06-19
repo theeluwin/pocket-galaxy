@@ -110,7 +110,6 @@ npm-debug.log
 # django
 *.sqlite3
 .env
-.keep
 shared/
 
 # Mac

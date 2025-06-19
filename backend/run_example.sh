@@ -1,4 +1,4 @@
-runpy () {
+x () {
     docker run \
         -it \
         --rm \
@@ -7,7 +7,7 @@ runpy () {
         -v "${PWD}/shared:/shared" \
         -v "${PWD}:/app" \
         pocket-galaxy-back-dev \
-        python "$@"
+        "$@"
 }
 
-runpy main.py
+x python script_example.py

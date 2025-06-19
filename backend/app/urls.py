@@ -3,9 +3,7 @@ from django.urls import include
 from rest_framework import routers
 
 from app import views
-from app.viewsets import (
-    DocumentViewSet,
-)
+from app.viewsets import DocumentViewSet
 
 
 router = routers.SimpleRouter()
