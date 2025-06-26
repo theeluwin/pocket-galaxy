@@ -39,6 +39,30 @@ Whenever required.
 ./scripts/makemigrations.sh
 ```
 
+### Migrate
+
+Whenever required.
+
+```bash
+./scripts/migrate.sh
+```
+
+### Collect Static
+
+Whenever required.
+
+```bash
+./scripts/collectstatic.sh
+```
+
+### Test
+
+Whenever required.
+
+```bash
+./scripts/test.sh
+```
+
 ## Miscellaneous Tasks
 
 Refer to `./script_example.py` and `./script_example.sh` for examples.
