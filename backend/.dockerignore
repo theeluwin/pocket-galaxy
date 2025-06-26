@@ -5,11 +5,8 @@
 .gitignore
 .dockerignore
 .coverage
-docker-compose.yml
-LICENSE
 README.md
-shared/
-dockerfiles/
-venv/
-compose/
-nginx.conf
+Dockerfile.dev
+tox.ini
+script_example.py
+script_example.sh

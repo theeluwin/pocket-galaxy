@@ -1,8 +1,19 @@
-# VSCode settings
-.vscode
-
-# Mac
 .DS_Store
-
-# Environment variables
+.vscode
 .env
+shared/
+*.log
+.coverage
+.mypy_cache/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

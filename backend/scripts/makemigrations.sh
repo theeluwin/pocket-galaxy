@@ -4,10 +4,10 @@ x () {
         --rm \
         --init \
         --env-file .env \
-        -v "${PWD}/shared:/shared" \
+        -v "${PWD}/../shared:/shared" \
         -v "${PWD}:/app" \
-        pocket-galaxy-back-dev \
+        pocket-galaxy-dev-backend \
         "$@"
 }
 
-x python script_example.py
+x python manage.py makemigrations

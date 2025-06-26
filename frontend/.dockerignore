@@ -1,6 +1,12 @@
 .DS_Store
+.vscode
+.git
+.gitignore
 .dockerignore
+.editorconfig
+.gitattributes
+README.md
+Dockerfile.dev
+script_example.sh
 dist/
 node_modules/
-dockerfiles/
-compose/

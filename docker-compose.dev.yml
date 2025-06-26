@@ -1,0 +1,43 @@
+services:
+  backend:
+    image: pocket-galaxy-dev-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: pocket-galaxy-dev-backend-container
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+      - ./shared:/shared
+    networks:
+      - pocket-galaxy-dev-network
+  frontend:
+    image: pocket-galaxy-dev-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: pocket-galaxy-dev-frontend-container
+    ports:
+      - 5173:5173
+    volumes:
+      - ./frontend/src:/app/src
+    networks:
+      - pocket-galaxy-dev-network
+  nginx:
+    image: nginx:stable-alpine
+    volumes:
+      - ./nginx/dev.conf:/etc/nginx/conf.d/default.conf
+      - ./shared:/shared
+    container_name: pocket-galaxy-dev-nginx-container
+    ports:
+      - 80:80
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - pocket-galaxy-dev-network
+networks:
+  pocket-galaxy-dev-network:
+    name: pocket-galaxy-dev-network
+    driver: bridge

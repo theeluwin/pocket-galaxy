@@ -16,13 +16,16 @@ export default defineConfig({
     }
   },
   server: {
-    port: parseInt(process.env.WEB_PORT || '8002'),
+    port: 5173,
     host: '0.0.0.0',
     cors: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
       'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-    }
+    },
+    hmr: {
+      clientPort: 5173,
+    },
   }
 })

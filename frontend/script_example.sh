@@ -3,9 +3,8 @@ x () {
         -it \
         --rm \
         --init \
-        --workdir /app \
         -v "${PWD}:/app" \
-        node:24-alpine3.21 \
+        pocket-galaxy-dev-frontend \
         "$@"
 }
 

@@ -16,6 +16,7 @@ try:
     DEBUG = bool(int(getenv('DEBUG', False)))
 except ValueError:
     DEBUG = False
+HOST = getenv('HOST', 'localhost')
 
 # security
 SECURE_PROXY_SSL_HEADER = None
@@ -97,31 +98,60 @@ LOGGING = {
         },
     },
     'handlers': {
-        'default': {
+        'console': {
             'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+        'default': {
+            'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOG_ROOT / 'django.log',
-            'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5,
+            'maxBytes': 1024 * 1024 * 10,
+            'backupCount': 10,
             'formatter': 'standard',
         },
         'request': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_ROOT / 'django.request.log',
+            'maxBytes': 1024 * 1024 * 10,
+            'backupCount': 10,
+            'formatter': 'standard',
+        },
+        'sql': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_ROOT / 'request.log',
-            'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5,
+            'filename': LOG_ROOT / 'django.sql.log',
+            'maxBytes': 1024 * 1024 * 10,
+            'backupCount': 10,
             'formatter': 'standard',
         },
         'project': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': LOG_ROOT / 'project.log',
+            'filename': LOG_ROOT / 'django.project.log',
+            'formatter': 'standard',
         },
     },
     'loggers': {
+        'django': {
+            'handlers': ['default'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['request'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django.db.backends': {
+            'handlers': ['sql'] if DEBUG else [],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
         'project': {
-            'handlers': ['project'],
+            'handlers': ['console', 'project'] if DEBUG else ['project'],
             'level': 'DEBUG',
             'propagate': True,
         },
@@ -186,19 +216,12 @@ SIMPLE_JWT = {
 }
 
 # host
-if DEBUG:
-    ALLOWED_HOSTS = ['*']
-else:
-    ALLOWED_HOSTS = [host for host in getenv('ALLOWED_HOSTS', '').split(',') if host]
+ALLOWED_HOSTS = [HOST]
 CORS_ALLOW_ALL_ORIGINS = DEBUG
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:80',
-    'http://127.0.0.1:80',
-    'http://localhost:8001',
-    'http://127.0.0.1:8001',
-    'http://localhost:8002',
-    'http://127.0.0.1:8002',
-]  # TODO: need better way
+    f'http://{HOST}',
+    f'https://{HOST}',
+]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -220,12 +243,8 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:80',
-    'http://127.0.0.1:80',
-    'http://localhost:8001',
-    'http://127.0.0.1:8001',
-    'http://localhost:8002',
-    'http://127.0.0.1:8002',
-]  # TODO: need better way
+    f'http://{HOST}',
+    f'https://{HOST}',
+]
 CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SAMESITE = 'Lax'
