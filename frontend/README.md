@@ -7,7 +7,13 @@ However, from this point on, you'll need to implement those yourself using Vue a
 
 ## Development Environment
 
-The folder `./src/` is volume-bound. Since it's in development mode, changes are reflected in real time.
+Install packages for local development environment.
+
+```bash
+npm install
+```
+
+Note that the folder `./src/` is volume-bound. Since it's in development mode, changes are reflected in real time.
 
 ### Build Development Image
 

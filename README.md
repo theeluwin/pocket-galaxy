@@ -32,6 +32,12 @@ Use docker compose.
 docker compose -f docker-compose.dev.yml up --build -d
 ```
 
+Or, just simply
+
+```bash
+./run_dev.sh
+```
+
 Then, go to browser's `localhost`.
 
 ### Production
@@ -48,6 +54,12 @@ docker run \
     -v ./shared:/shared \
     --name pocket-galaxy-container \
     pocket-galaxy
+```
+
+Or, just simply
+
+```bash
+./run_prod.sh
 ```
 
 To change the host, edit `/backend/.env` and `/nginx/prod.conf`.
