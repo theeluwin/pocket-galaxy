@@ -63,6 +63,14 @@ Whenever required.
 ./scripts/test.sh
 ```
 
+### Check
+
+Whenever required.
+
+```bash
+./scripts/check.sh
+```
+
 ## Miscellaneous Tasks
 
 Refer to `./script_example.py` and `./script_example.sh` for examples.
