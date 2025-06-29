@@ -16,6 +16,7 @@ try:
     DEBUG = bool(int(getenv('DEBUG', False)))
 except ValueError:
     DEBUG = False
+PROTOCOL = getenv('PROTOCOL', 'http')
 HOST = getenv('HOST', 'localhost')
 
 # security
@@ -216,8 +217,7 @@ SIMPLE_JWT = {
 ALLOWED_HOSTS = [HOST]
 CORS_ALLOW_ALL_ORIGINS = DEBUG
 CORS_ALLOWED_ORIGINS = [
-    f'http://{HOST}',
-    f'https://{HOST}',
+    f'{PROTOCOL}://{HOST}',
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
@@ -240,8 +240,16 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 CSRF_TRUSTED_ORIGINS = [
-    f'http://{HOST}',
-    f'https://{HOST}',
+    f'{PROTOCOL}://{HOST}',
 ]
 CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SAMESITE = 'Lax'
+
+# email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = getenv('EMAIL_PORT', 587)
+EMAIL_HOST_USER = getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = getenv('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False

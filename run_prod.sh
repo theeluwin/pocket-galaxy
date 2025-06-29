@@ -3,7 +3,8 @@ docker stop pocket-galaxy-container
 docker rm pocket-galaxy-container
 docker run \
     -d \
-    -p 80:80 \
-    -v ./shared:/shared \
+    --publish 80:80 \
+    --volume ./shared:/shared \
+    --env-file ./backend/.env.prod \
     --name pocket-galaxy-container \
     pocket-galaxy

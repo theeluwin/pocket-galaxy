@@ -8,11 +8,16 @@ If you're setting things up for the first time, just follow the steps below in o
 
 ### Environment Variables
 
-Create a `./.env` file (see `./.env.example`):
+Create a `./.env.dev` and `./.env.prod` file (see `./.env.sample`):
 
 ```bash
 SECRET_KEY=django_secret_key
-HOST=localhost
+PROTOCOL=https
+HOST=yourdomain.com
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_HOST_USER=
+EMAIL_HOST_PASSWORD=
 ```
 
 ### Build Development Image

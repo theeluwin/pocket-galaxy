@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile.dev
     container_name: pocket-galaxy-dev-backend-container
     env_file:
-      - ./backend/.env
+      - ./backend/.env.dev
     volumes:
       - ./backend:/app
       - ./shared:/shared

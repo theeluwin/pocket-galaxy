@@ -114,3 +114,7 @@ shared/
 
 # Mac
 .DS_Store
+
+# custom
+.env.dev
+.env.prod
