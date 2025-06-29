@@ -26,7 +26,9 @@ By default, all logs are stored in `/shared/logfiles` and all DBs are stored in 
 
 ### Developement
 
-Use docker compose.
+Create `.env.dev` file under `/backend/`. See `/backend/README.md` and `/backend/.env.sample`.
+
+Then, use docker compose.
 
 ```bash
 docker compose -f docker-compose.dev.yml up --build -d
@@ -42,7 +44,9 @@ Then, go to browser's `localhost`.
 
 ### Production
 
-We build it in a one docker image (use ECS or somethig).
+Create `.env.prod` file under `/backend/`. See `/backend/README.md` and `/backend/.env.sample`.
+
+Then, we build it in a one docker image (use ECS or somethig).
 
 ```bash
 docker build -t pocket-galaxy -f Dockerfile.prod .
@@ -50,8 +54,9 @@ docker stop pocket-galaxy-container
 docker rm pocket-galaxy-container
 docker run \
     -d \
-    -p 80:80 \
-    -v ./shared:/shared \
+    --publish 80:80 \
+    --volume ./shared:/shared \
+    --env-file ./backend/.env.prod \
     --name pocket-galaxy-container \
     pocket-galaxy
 ```
