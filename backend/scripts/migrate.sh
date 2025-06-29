@@ -3,7 +3,7 @@ x () {
         -it \
         --rm \
         --init \
-        --env-file .env \
+        --env-file .env.dev \
         -v "${PWD}/../shared:/shared" \
         -v "${PWD}:/app" \
         pocket-galaxy-dev-backend \
