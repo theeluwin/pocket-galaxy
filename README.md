@@ -9,20 +9,20 @@ This project supports:
 * JWT-based authentication.
   * refresh token is assumed to be inside the HTTP Only Cookies
 * Django's `runserver`-based backend development environment.
-* Vue's vite-based frontend development environment.
+* Vue's `vite`-based frontend development environment.
 * nginx for development/production environment, respectively.
 
 All backend related stuffs will use reverse proxy of `/api` (via nginx).
 
 In summary, nginx will
 
-* 80 &rightarrow; URL `/static` &rightarrow; Path `/shared/staticfiles`
-* 80 &rightarrow; URL `/media` &rightarrow; Path `/shared/mediafiles`
+* 80 &rightarrow; URL `/static` &rightarrow; docker container path `/shared/staticfiles` (volume bind required)
+* 80 &rightarrow; URL `/media` &rightarrow; docker container path `/shared/mediafiles` (volume bind required)
 * 80 &rightarrow; URL `/api` &rightarrow; Proxy 8000 (backend server)
 * 80 &rightarrow; URL `/` &rightarrow; Serve frontend
   * In case of development, Proxy 5173 (frontend server)
 
-By default, all logs are stored in `/shared/logfiles` and all DBs are stored in `/shared/dbfiles`.
+By default, all logs are stored in `/shared/logfiles` and all DBs are stored in `/shared/dbfiles` (docker container path, thus volume bind required).
 
 ### Developement
 
@@ -67,7 +67,7 @@ Or, just simply
 ./run_prod.sh
 ```
 
-To change the host, edit `/backend/.env` and `/nginx/prod.conf`.
+To change the host, edit `/backend/.env.prod` and `/nginx/prod.conf`.
 
 ---
 

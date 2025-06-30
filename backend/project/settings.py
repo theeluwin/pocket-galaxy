@@ -75,8 +75,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # i18n
-LANGUAGE_CODE = 'ko'
-TIME_ZONE = 'Asia/Seoul'
+LANGUAGE_CODE = getenv('LANGUAGE_CODE', 'en-us')
+TIME_ZONE = getenv('TIME_ZONE', 'UTC')
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True

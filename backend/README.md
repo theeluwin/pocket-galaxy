@@ -14,6 +14,8 @@ Create a `./.env.dev` and `./.env.prod` file (see `./.env.sample`):
 SECRET_KEY=django_secret_key
 PROTOCOL=https
 HOST=yourdomain.com
+LANGUAGE_CODE=en-us
+TIME_ZONE=UTC
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
 EMAIL_HOST_USER=
