@@ -29,10 +29,11 @@
       block
       color="success"
       type="submit"
-      text="Login"
       :disabled="!isValid"
       class="mb-5"
-    />
+    >
+      Login
+    </v-btn>
     <v-snackbar
       location="top"
       color="error"

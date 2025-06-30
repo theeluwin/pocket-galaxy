@@ -8,23 +8,26 @@
     <v-list>
       <v-list-item
         link
-        title="Home"
         prepend-icon="mdi-home"
         @click="navigate('home')"
-      />
+      >
+        Home
+      </v-list-item>
       <v-list-item
         link
-        title="Documents"
         prepend-icon="mdi-file-document-multiple"
         @click="navigate('document-list')"
-      />
+      >
+        Documents
+      </v-list-item>
       <v-divider />
       <v-list-item
         link
-        title="Logout"
         prepend-icon="mdi-logout"
         @click="logout"
-      />
+      >
+        Logout
+      </v-list-item>
     </v-list>
   </v-navigation-drawer>
   <v-app-bar color="primary">

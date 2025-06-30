@@ -5,6 +5,8 @@ Basic features like login and displaying the list are included by default.
 Usually, when using it individually, you might also use things like list filtering or gallery views.
 However, from this point on, you'll need to implement those yourself using Vue and Vuetify.
 
+See [blitz-quiz](https://github.com/theeluwin/blitz-quiz) for the use case.
+
 ## Development Environment
 
 Install packages for local development environment.
