@@ -42,6 +42,12 @@ Or, just simply
 
 Then, go to browser's `localhost`.
 
+To kill the process, use:
+
+```bash
+docker compose -f docker-compose.dev.yml down
+```
+
 ### Production
 
 Create `.env.prod` file under `/backend/`. See `/backend/README.md` and `/backend/.env.sample`.
@@ -68,6 +74,13 @@ Or, just simply
 ```
 
 To change the host, edit `/backend/.env.prod` and `/nginx/prod.conf`.
+
+To kill the process, use:
+
+```bash
+docker stop pocket-galaxy-container
+docker rm pocket-galaxy-container
+```
 
 ---
 
