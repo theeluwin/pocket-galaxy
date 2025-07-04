@@ -7,7 +7,7 @@ RUN npm install
 COPY ./frontend/ .
 RUN npm run build
 
-# runtime stage
+# runtime stage (TODO: specify versions of git, nginx)
 FROM python:3.12-slim AS runtime-stage
 LABEL maintainer="Jamie Seol <theeluwin@gmail.com>"
 RUN apt-get update && \
@@ -33,7 +33,7 @@ RUN pip install -r requirements.txt
 
 # run
 WORKDIR /app
-COPY ./nginx/prod.conf /etc/nginx/sites-available/default
+COPY ./nginx/prod.conf /etc/nginx/conf.d/default.conf
 RUN nginx -t
 COPY ./entrypoint.prod.sh /app/entrypoint.prod.sh
 EXPOSE 80

@@ -1,6 +1,6 @@
 docker build -t pocket-galaxy -f Dockerfile.prod .
-docker stop pocket-galaxy-container
-docker rm pocket-galaxy-container
+docker stop pocket-galaxy-container 2>/dev/null || true
+docker rm pocket-galaxy-container 2>/dev/null || true
 docker run \
     -d \
     --publish 80:80 \
