@@ -1,40 +1,33 @@
 import axios from 'axios'
-import { useUserStore } from '@/stores/user'
-import { API_PREFIX } from '@/constants'
+import { useAuthStore } from '@/stores/auth'
 
-
+let onHttpUnauthorized: (() => void) | null = null
 const http = axios.create({
-  baseURL: API_PREFIX,
   withCredentials: true
 })
 
-http.interceptors.request.use(
-  (config) => {
-    const userStore = useUserStore()
-    if (userStore.accessToken) {
-      config.headers.Authorization = `Bearer ${userStore.accessToken}`
-    }
-    return config
-  }
-)
+export function setHttpUnauthorizedHandler(handler: () => void) {
+  onHttpUnauthorized = handler
+}
 
 http.interceptors.response.use(
   (res) => {
     return res
   },
   async (err) => {
-    const userStore = useUserStore()
+    const authStore = useAuthStore()
     const originalRequest = err.config
     if (originalRequest && err.response && err.response.status === 401) {
       if (originalRequest.url.endsWith('/token/refresh/')) {
         throw err
       }
       try {
-        await userStore.refreshToken()
-        originalRequest.headers.Authorization = `Bearer ${userStore.accessToken}`
+        await authStore.refreshToken()
         return http(originalRequest)
       } catch (refreshError) {
-        throw refreshError
+        if (onHttpUnauthorized) {
+          onHttpUnauthorized()
+        }
       }
     }
     throw err

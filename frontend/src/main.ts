@@ -14,11 +14,17 @@ import './assets/custom.css'
 // components
 import App from './App.vue'
 import router from './router'
+import { setHttpUnauthorizedHandler } from './plugins/http'
 
 // init vuetify
 const vuetify = createVuetify({
   components,
   directives,
+})
+
+// init http
+setHttpUnauthorizedHandler(() => {
+  router.push({ name: 'login' })
 })
 
 // init app

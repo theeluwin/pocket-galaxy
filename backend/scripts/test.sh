@@ -1,15 +1,8 @@
-x () {
-    docker run \
-        -it \
-        --rm \
-        --init \
-        --env-file .env.dev \
-        -v "${PWD}/../shared:/shared" \
-        -v "${PWD}:/app" \
-        pocket-galaxy-dev-backend \
-        "$@"
-}
+#!/bin/bash
 
-x flake8 .
-x coverage run manage.py test
-x coverage report -m
+python manage.py migrate --noinput
+python manage.py collectstatic --noinput
+python manage.py check
+flake8 .
+coverage run manage.py test
+coverage report -m

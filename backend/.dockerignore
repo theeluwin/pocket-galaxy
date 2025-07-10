@@ -1,9 +1,6 @@
 .DS_Store
-.vscode
-.env
-.git
-.gitignore
 .dockerignore
 .coverage
 README.md
 Dockerfile.dev
+Dockerfile.prod

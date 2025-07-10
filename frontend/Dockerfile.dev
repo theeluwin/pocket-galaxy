@@ -1,15 +1,18 @@
-# from
+# base image
 FROM node:24-alpine3.21
-LABEL maintainer="Jamie Seol <theeluwin@gmail.com>"
 
-# prepare
+# install apk packages
+RUN apk add --no-cache git curl
+
+# prepare workdir
+RUN mkdir --parents /app
 WORKDIR /app
 
-# install packages
+# install npm packages
 COPY package*.json ./
 RUN npm install
 
-# copy sources (`src/` should be bound)
+# copy others (`src/` should be volume-bound)
 COPY . .
 
 # run

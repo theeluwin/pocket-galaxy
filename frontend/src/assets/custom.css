@@ -1,0 +1,18 @@
+.text-transform-none {
+    text-transform: none;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+.container-small {
+    max-width: 480px;
+    margin: 0 auto;
+}
+.container-medium {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.v-snackbar--variant-outlined {
+    background-color: rgba(255, 255, 255, 0.9);
+}

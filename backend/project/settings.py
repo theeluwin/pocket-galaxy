@@ -3,44 +3,46 @@ from pathlib import Path
 from datetime import timedelta
 
 
-# custom
-ADMIN_TITLE = 'Pocket Galaxy Admin'
-
 # path
 BASE_DIR = Path(__file__).resolve().parent.parent
 SHARED_ROOT = Path('/shared')
 
+# site
+PROTOCOL = getenv('PROTOCOL', 'http')
+HOST = getenv('HOST', 'localhost')
+SITE_TITLE = getenv('SITE_TITLE', 'Site')
+
+# admin
+ADMIN_TITLE = getenv('ADMIN_TITLE', 'Admin')
+
 # credential
-SECRET_KEY = getenv('SECRET_KEY', "It's a secret to everybody!")
+SECRET_KEY = getenv('SECRET_KEY', 'django_secret_key')
 try:
     DEBUG = bool(int(getenv('DEBUG', False)))
 except ValueError:
     DEBUG = False
-PROTOCOL = getenv('PROTOCOL', 'http')
-HOST = getenv('HOST', 'localhost')
 
 # security
 SECURE_PROXY_SSL_HEADER = None
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
 SECURE_SSL_REDIRECT = False
 
 # app
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_filters',
     'rest_framework',
     'corsheaders',
+    'django_filters',
     'app',
 ]
 
-# wsgi
-WSGI_APPLICATION = 'project.wsgi.application'
+# asgi
+ASGI_APPLICATION = 'project.asgi.application'
 
 # url
 APPEND_SLASH = True
@@ -56,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'project.middlewares.cookies.JWTCookieMiddleware',
 ]
 
 # password
@@ -129,8 +132,18 @@ LOGGING = {
         },
         'project': {
             'level': 'INFO',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOG_ROOT / 'django.project.log',
+            'maxBytes': 1024 * 1024 * 10,
+            'backupCount': 10,
+            'formatter': 'standard',
+        },
+        'channels': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_ROOT / 'django.channels.log',
+            'maxBytes': 1024 * 1024 * 10,
+            'backupCount': 10,
             'formatter': 'standard',
         },
     },
@@ -146,14 +159,19 @@ LOGGING = {
             'propagate': True,
         },
         'django.db.backends': {
-            'handlers': ['sql'] if DEBUG else [],
-            'level': 'DEBUG',
+            'handlers': ['sql'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
             'propagate': False,
         },
         'project': {
             'handlers': ['console', 'project'] if DEBUG else ['project'],
-            'level': 'DEBUG',
+            'level': 'DEBUG' if DEBUG else 'INFO',
             'propagate': True,
+        },
+        'channels': {
+            'handlers': ['console'] if DEBUG else ['channels'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
         },
     },
 }
@@ -176,13 +194,68 @@ TEMPLATES = [
 ]
 
 # database
+POSTGRES_HOST = getenv('POSTGRES_HOST', 'db')
+POSTGRES_DB = getenv('POSTGRES_DB', 'postgres')
+POSTGRES_PORT = str(getenv('POSTGRES_PORT', '5432'))
+POSTGRES_USER = getenv('POSTGRES_USER', 'postgres')
+POSTGRES_PASSWORD = getenv('POSTGRES_PASSWORD', '')
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': SHARED_ROOT / 'dbfiles' / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': POSTGRES_HOST,
+        'NAME': POSTGRES_DB,
+        'PORT': POSTGRES_PORT,
+        'USER': POSTGRES_USER,
+        'PASSWORD': POSTGRES_PASSWORD,
     }
 }
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# redis
+REDIS_HOST = getenv('REDIS_HOST', 'redis')
+REDIS_PORT = int(getenv('REDIS_PORT', 6379))
+REDIS_PASSWORD = getenv('REDIS_PASSWORD', '')
+
+# cache
+CACHE_DB = int(getenv('CACHE_DB', 0))
+CACHE_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/{CACHE_DB}"
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': CACHE_URL,
+    },
+}
+
+# session
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+# celery
+CELERY_BROKER_DB = int(getenv('CELERY_BROKER_DB', 1))
+CELERY_BROKER_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/{CELERY_BROKER_DB}"
+CELERY_RESULT_DB = getenv('CELERY_RESULT_DB', 2)
+CELERY_RESULT_BACKEND = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/{CELERY_RESULT_DB}"
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_ALWAYS_EAGER = False
+CELERY_TASK_EAGER_PROPAGATES = False
+
+# channels
+WEBSOCKET_TICKET_TTL = 600
+CHANNEL_DB = int(getenv('CHANNEL_DB', 3))
+CHANNEL_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/{CHANNEL_DB}"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [CHANNEL_URL],
+        },
+    },
+}
 
 # rest
 REST_FRAMEWORK = {
@@ -197,24 +270,31 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
     ),
     'DEFAULT_PAGINATION_CLASS': 'project.paginations.GeneralPageNumberPagination',
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 
 # jwt
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_COOKIE': 'user_session',
+    'AUTH_COOKIE_ACCESS': 'access',
+    'AUTH_COOKIE_REFRESH': 'refresh',
     'AUTH_COOKIE_DOMAIN': None,
     'AUTH_COOKIE_SECURE': not DEBUG,
     'AUTH_COOKIE_HTTP_ONLY': True,
     'AUTH_COOKIE_PATH': '/',
     'AUTH_COOKIE_SAMESITE': 'Lax',
-    'LEEWAY': 3600 * 24 * 7,
+    'LEEWAY': 0,
 }
 
 # host
 ALLOWED_HOSTS = [HOST]
+
+# cors
 CORS_ALLOW_ALL_ORIGINS = DEBUG
 CORS_ALLOWED_ORIGINS = [
     f'{PROTOCOL}://{HOST}',
@@ -239,13 +319,16 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+# csrf
 CSRF_TRUSTED_ORIGINS = [
     f'{PROTOCOL}://{HOST}',
 ]
+CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SAMESITE = 'Lax'
 
 # email
+EMAIL_RETRY_DELAY = 60 * 10
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = getenv('EMAIL_PORT', 587)

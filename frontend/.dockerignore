@@ -1,12 +1,9 @@
 .DS_Store
-.vscode
-.git
-.gitignore
 .dockerignore
 .editorconfig
 .gitattributes
 README.md
 Dockerfile.dev
-script_example.sh
+Dockerfile.prod
 dist/
 node_modules/

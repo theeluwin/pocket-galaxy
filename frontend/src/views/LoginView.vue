@@ -1,106 +1,129 @@
 <template>
-  <v-form
-    lazy-validation
-    id="form"
-    ref="form"
-    v-model="isValid"
-    @submit.prevent="onClick"
-  >
-    <h1 class="mb-3">Pocket Galaxy</h1>
-    <v-text-field
-      required
-      label="Username"
-      type="text"
-      v-model="body.username"
-      :rules="rules.username"
-      :error-messages="messages.username"
-      class="mb-3"
-    />
-    <v-text-field
-      required
-      label="Password"
-      type="password"
-      v-model="body.password"
-      :rules="rules.password"
-      :error-messages="messages.password"
-      class="mb-3"
-    />
-    <v-btn
-      block
-      color="success"
-      type="submit"
-      :disabled="!isValid"
-      class="mb-5"
+  <div id="login-view" class="container-small pt-10">
+    <h1 class="text-center mb-5">{{ SITE_TITLE }} Login</h1>
+    <v-form
+      lazy-validation
+      ref="formRef"
+      v-model="form.isValid"
+      @submit.prevent="login"
     >
-      Login
-    </v-btn>
-    <v-snackbar
-      location="top"
-      color="error"
-      variant="outlined"
-      v-model="snackbar"
-    >
-      {{ messages.common }}
-      <template #actions>
-        <v-btn
-          text="Close"
-          @click="snackbar = false"
-        />
-      </template>
-    </v-snackbar>
-  </v-form>
+      <v-text-field
+        class="mb-3"
+        label="Email"
+        variant="outlined"
+        prepend-inner-icon="mdi-email-outline"
+        required
+        type="email"
+        v-model="form.username"
+        :rules="[
+          (v: string) => !!v || 'Email is required',
+        ]"
+      />
+      <v-text-field
+        class="mb-3"
+        label="Password"
+        variant="outlined"
+        prepend-inner-icon="mdi-lock-outline"
+        required
+        type="password"
+        v-model="form.password"
+        :rules="[
+          (v: string) => !!v || 'Password is required',
+          (v: string) => v.length >= 8 || 'Password must be at least 8 characters long'
+        ]"
+      />
+      <v-btn
+        class="mb-5"
+        block
+        size="large"
+        color="success"
+        type="submit"
+        :disabled="!form.isValid"
+        :loading="form.isLoading"
+      >
+        Login
+      </v-btn>
+      <v-btn
+        class="mb-5"
+        block
+        size="large"
+        color="primary"
+        @click="router.push({ name: 'register' })"
+      >
+        Go to Register
+      </v-btn>
+      <v-btn
+        class="mb-5"
+        block
+        size="large"
+        color="info"
+        variant="text"
+        @click="router.push({ name: 'password-request' })"
+      >
+        Forgot Password
+      </v-btn>
+      <v-snackbar
+        :text="snackbar.message"
+        location="top"
+        variant="outlined"
+        :color="snackbar.color"
+        v-model="snackbar.isVisible"
+      >
+        <template #actions>
+          <v-btn @click="snackbar.isVisible = false">
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
+    </v-form>
+  </div>
 </template>
 
-<style scoped>
-  #form {
-    width: 100%;
-    max-width: 480px;
-    margin: 70px auto 0 auto;
-  }
-</style>
-
 <script setup lang="ts">
+
   import { ref, reactive } from 'vue'
   import { useRouter } from 'vue-router'
-  import { useUserStore } from '@/stores/user' // Use Pinia store
+  import { useAuthStore } from '@/stores/auth'
+  import { useUserStore } from '@/stores/user'
+  import { SITE_TITLE } from '@/constants'
 
   const router = useRouter()
+  const authStore = useAuthStore()
   const userStore = useUserStore()
 
-  const form = ref()
-  const isValid = ref(true)
-  const snackbar = ref(false)
+  const formRef = ref()
 
-  const body = reactive({
+  const form = reactive({
     username: '',
-    password: ''
+    password: '',
+    isValid: true,
+    isLoading: false
   })
-  const rules = {
-    username: [(v: string) => !!v || 'Username is required'],
-    password: [(v: string) => !!v || 'Password is required']
-  }
-  const messages = reactive({
-    common: null as string | null,
-    username: null as string | null,
-    password: null as string | null
+  const snackbar = reactive({
+    message: '',
+    color: 'error',
+    isVisible: false
   })
 
-  async function onClick() {
-    if (!form.value?.validate()) {
+  async function login () {
+    if (form.isLoading) {
       return
     }
+    if (!formRef.value?.validate()) {
+      return
+    }
+    form.isLoading = true
     try {
-      await userStore.login(body.username, body.password)
+      await authStore.login(form.username, form.password)
+      await userStore.getProfile()
       router.push({ name: 'home' })
-    } catch (err: any) {
-      console.log(err)
-      const resd = err?.response?.data || {}
-      messages.username = resd.username || null
-      messages.password = resd.password || null
-      messages.common = resd.detail || null
-      if (messages.common) {
-        snackbar.value = true
-      }
+    } catch (error: any) {
+      snackbar.message = error.response.data.error || "Login failed. Please check your email and password."
+      snackbar.color = 'error'
+      snackbar.isVisible = true
+    } finally {
+      form.isLoading = false
     }
   }
+
 </script>
