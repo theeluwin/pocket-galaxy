@@ -37,6 +37,7 @@ const requireStaff = () => {
   }
 }
 
+const SITE_TITLE = import.meta.env.VITE_SITE_TITLE as string
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -46,6 +47,9 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: HomeView,
+      meta: {
+        title: SITE_TITLE
+      },
       beforeEnter: requireAuth()
     },
     {
@@ -53,6 +57,7 @@ const router = createRouter({
       name: 'login',
       component: LoginView,
       meta: {
+        title: `${SITE_TITLE} - Login`,
         hideNav: true
       }
     },
@@ -61,6 +66,7 @@ const router = createRouter({
       name: 'register',
       component: RegisterView,
       meta: {
+        title: `${SITE_TITLE} - Register`,
         hideNav: true
       }
     },
@@ -69,6 +75,7 @@ const router = createRouter({
       name: 'password-request',
       component: PasswordRequestView,
       meta: {
+        title: `${SITE_TITLE} - Forgot Password`,
         hideNav: true
       }
     },
@@ -77,6 +84,7 @@ const router = createRouter({
       name: 'password-reset',
       component: PasswordResetView,
       meta: {
+        title: `${SITE_TITLE} - Password Reset`,
         hideNav: true
       }
     },
@@ -84,18 +92,27 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: ProfileView,
+      meta: {
+        title: `${SITE_TITLE} - Profile`,
+      },
       beforeEnter: requireAuth()
     },
     {
       path: '/document/list',
       name: 'document-list',
       component: DocumentListView,
+      meta: {
+        title: `${SITE_TITLE} - Documents`,
+      },
       beforeEnter: requireAuth()
     },
     {
       path: '/chat',
       name: 'chat',
       component: ChatView,
+      meta: {
+        title: `${SITE_TITLE} - Chat`,
+      },
       beforeEnter: requireAuth()
     },
 
@@ -112,12 +129,21 @@ const router = createRouter({
       name: 'lost',
       component: LostView,
       meta: {
+        title: `${SITE_TITLE}`,
         hideNav: true,
         hideFooter: true
       }
     }
 
   ],
+})
+
+router.afterEach((to) => {
+  if (to.meta && to.meta.title) {
+    document.title = to.meta.title as string
+  } else {
+    document.title = SITE_TITLE
+  }
 })
 
 export default router
