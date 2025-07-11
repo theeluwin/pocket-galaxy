@@ -35,7 +35,7 @@ class ChannelsJWTAuthMiddleware(BaseMiddleware):
         return await super().__call__(scope, receive, send)
 
     @database_sync_to_async
-    def get_user(user_id):
+    def get_user(self, user_id):
         User = get_user_model()
         return User.objects.get(id=user_id)
 
