@@ -23,7 +23,7 @@ services:
       timeout: 15s
       retries: 5
   celery:
-    image: pocket-galaxy-dev-backend
+    image: pocket-galaxy-dev-backend:celery
     build:
       context: ${PWD}/backend
       dockerfile: Dockerfile.dev
@@ -44,7 +44,7 @@ services:
       redis:
         condition: service_healthy
   flower:
-    image: pocket-galaxy-dev-backend
+    image: pocket-galaxy-dev-backend:flower
     build:
       context: ${PWD}/backend
       dockerfile: Dockerfile.dev

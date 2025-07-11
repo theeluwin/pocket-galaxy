@@ -45,7 +45,6 @@
             block
             size="large"
             color="info"
-            variant="elevated"
             prepend-icon="mdi-email-edit"
             type="submit"
             :disabled="!usernameForm.isValid"
@@ -100,7 +99,6 @@
             block
             size="large"
             color="warning"
-            variant="elevated"
             prepend-icon="mdi-lock-reset"
             type="submit"
             :disabled="!passwordForm.isValid"

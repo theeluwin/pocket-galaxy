@@ -91,7 +91,7 @@ TIME_ZONE=UTC
 # django email
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
-EMAIL_HOST_USER=your@email.com
+EMAIL_HOST_USER=your_email@gmail.com
 EMAIL_HOST_PASSWORD=your_email_app_password  # use gmail app password (not your root password)
 
 # db (for other DBMS, setup yourself)

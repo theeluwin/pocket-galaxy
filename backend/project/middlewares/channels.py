@@ -9,13 +9,8 @@ from channels.middleware import BaseMiddleware
 from channels.exceptions import DenyConnection
 
 
-@database_sync_to_async
-def get_user(user_id):
-    User = get_user_model()
-    return User.objects.get(id=user_id)
-
-
 class ChannelsJWTAuthMiddleware(BaseMiddleware):
+
     def __init__(self, inner):
         self.inner = inner
 
@@ -29,7 +24,7 @@ class ChannelsJWTAuthMiddleware(BaseMiddleware):
         cache.delete(key)
         User = get_user_model()
         try:
-            return await get_user(user_id)
+            return await self.get_user(user_id)
         except User.DoesNotExist:
             raise DenyConnection("Invalid ticket.")
 
@@ -38,6 +33,11 @@ class ChannelsJWTAuthMiddleware(BaseMiddleware):
         query_string = scope['query_string'].decode('utf-8')
         scope['user'] = await self.auth(query_string)
         return await super().__call__(scope, receive, send)
+
+    @database_sync_to_async
+    def get_user(user_id):
+        User = get_user_model()
+        return User.objects.get(id=user_id)
 
 
 def ChannelsJWTAuthMiddlewareStack(inner):

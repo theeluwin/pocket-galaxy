@@ -2,6 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUserStore } from '@/stores/user'
+import { SITE_TITLE } from '@/constants'
 
 // views
 import HomeView from '@/views/HomeView.vue'
@@ -37,7 +38,6 @@ const requireStaff = () => {
   }
 }
 
-const SITE_TITLE = import.meta.env.VITE_SITE_TITLE as string
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [

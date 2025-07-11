@@ -18,7 +18,7 @@ http.interceptors.response.use(
     const authStore = useAuthStore()
     const originalRequest = err.config
     if (originalRequest && err.response && err.response.status === 401) {
-      if (originalRequest.url.endsWith('/token/refresh/')) {
+      if (originalRequest.url.endsWith('/api/token/refresh/')) {
         throw err
       }
       try {
