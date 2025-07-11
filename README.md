@@ -61,8 +61,6 @@ Similarly, all redis files are stored in `./shared/redisfiles`.
 
 Django will use `./shared/staticfiles` and `./shared/mediafiles`, which will be served by nginx.
 
----
-
 ## Setting
 
 See `.env.sample` and create `.env.dev` for development and `.env.prod` for production.
@@ -121,8 +119,6 @@ CHANNEL_DB=3  # redis DB id
 ```
 
 But for html meta stuffs, you should modify `./frontend/index.html` manually.
-
----
 
 ## Developement
 
@@ -217,8 +213,6 @@ To update packages:
 ```bash
 dev run --rm frontend npm audit fix
 ```
-
----
 
 ## Production
 
